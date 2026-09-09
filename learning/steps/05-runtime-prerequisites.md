@@ -87,7 +87,7 @@ Tika 与 Gotenberg 用于可选的 Office 文档和电子邮件解析、转换�
 | Git | `git --version` 返回 2.43.0 | Git 命令可用 |
 | Python | `python3 --version` 返回 3.14.4 | 版本在官方列出的 3.11 至 3.14 范围内 |
 | pip | `pip3 --version` 成功，来自 pyenv 的 Python 3.14.4 | pip 命令可用；不能据此证明项目依赖已安装 |
-| `uv` | `uv --version` 返回 0.7.22 | `uv` 命令可用 |
+| `uv` | `uv --version` 返回 0.7.22 | 命令可执行，但低于 pyproject.toml 中 required-version 声明的 0.9.0，不满足当前项目要求 |
 | Node.js | `node --version` 返回 24.15.0 | 满足前端文档的 24 或更高版本条件 |
 | pnpm | `pnpm --version` 返回 10.28.1 | 命令可用，但与 `src-ui/package.json` 声明的 `pnpm@11.15.1` 不一致 |
 | SQLite | 命令行版本与 Python 使用的库均为 3.45.1 | SQLite 基础能力可用 |
@@ -95,6 +95,12 @@ Tika 与 Gotenberg 用于可选的 Office 文档和电子邮件解析、转换�
 | 构建基础 | Ubuntu 记录 `build-essential` 已安装；`gcc` 与 `make` 版本查询成功 | 基础编译命令可用 |
 | 部分系统库 | `gnupg`、`libpq-dev`、`default-libmysqlclient-dev`、`pkg-config`、`libxml2`、`zlib1g` 已安装 | 仅这些单项具备，不能代表完整依赖集合 |
 | 前端依赖目录 | `src-ui/node_modules` 存在 | 只证明目录存在；未验证内容完整或构建成功 |
+
+### 复核补充
+
+2026-09-09 当前聊天读取 GitHub 文件后发现：pyproject.toml 的 [tool.uv] 中声明 required-version = ">=0.9.0"，而本次环境报告为 0.7.22。原检查漏记了这一版本差异。命令能执行与符合项目要求必须分别记录。当前聊天只复核文件，没有进入原 Codex 环境重新测量。
+
+此外，找不到某个命令不一定代表对应共享库缺失。例如 libmagic 是供程序调用的文件类型识别库，不应凭所谓“libmagic 命令”缺失断定库不存在；需要查询库文件、软件包或实际加载结果。找到 Python 模块也不保证导入一定成功。下文未有更强证据的项目应按检查范围理解。
 
 ### 缺失或尚未达到要求
 
@@ -107,7 +113,7 @@ Tika 与 Gotenberg 用于可选的 Office 文档和电子邮件解析、转换�
 | 开发配置 | `paperless.conf` 不存在，只有示例文件 | 尚未完成首次开发配置 |
 | 数据目录 | `consume` 与 `media` 不存在 | 尚未完成开发说明要求的首次目录准备 |
 | pnpm 锁定版本 | 当前 10.28.1，项目声明 11.15.1 | 不能认定前端包管理环境与仓库要求一致 |
-| 光学字符识别与文档工具 | Tesseract、Ghostscript、qpdf、unpaper、ImageMagick、Poppler 工具和 libmagic 命令均未找到 | 本地方式无法完成完整文档识别与转换 |
+| 光学字符识别与文档工具 | Tesseract、Ghostscript、qpdf、unpaper、ImageMagick、Poppler 工具命令未找到；libmagic 共享库是否可加载需另行核验 | 本地方式无法完成完整文档识别与转换 |
 | 多项系统开发包 | `python3-dev`、Ubuntu 的 `python3-pip`、`python3-setuptools`、`python3-wheel`、`fonts-liberation`、`libmagic-dev` 等未记录为已安装 | 本地依赖安装前置集合不完整 |
 | 独立数据库客户端 | `psql` 与 `mariadb` 均未找到 | 不能使用客户端检查 PostgreSQL 或 MariaDB；最小 SQLite 路径不要求这两者 |
 
@@ -141,7 +147,7 @@ Tika 与 Gotenberg 用于可选的 Office 文档和电子邮件解析、转换�
 
 ## 下一步最小操作
 
-下一步只选择并准备一种运行路径，不同时尝试两套方案。针对当前以源代码学习和面试材料积累为目标的仓库，建议第六步先**制定并验收本地开发依赖安装方案**：根据 Ubuntu 24.04 和项目文档整理准确的软件包清单，先解决 pnpm 版本与项目声明的差异，再经用户明确要求后才执行安装。
+下一步只选择并准备一种运行路径，不同时尝试两套方案。针对当前以源代码学习和面试材料积累为目标的仓库，建议第六步先**使当前环境的 uv 满足项目版本要求**：重新核实实际版本与安装来源；如仍低于 0.9.0，按官方适用方式安装或升级并记录确切版本及执行路径。若已满足则不重复安装。前端 pnpm 的版本差异留到前端准备步骤解决，不阻塞当前后端工具准备。
 
 这只是下一步预告。本步不安装依赖、不复制 `paperless.conf`、不创建目录、不执行数据库迁移，也不启动消息代理或应用。
 
@@ -191,3 +197,5 @@ Docker Compose 把应用及大量依赖放在容器中统一管理，宿主机�
 ## 本步完成状态与下一步预告
 
 第五步前置条件检查已完成；应用未安装、未启动、未进行功能验证。下一步由用户明确要求后，再单独制定并验收一种运行路径的依赖安装方案。
+
+复核后的发布状态：2026-09-09 当前聊天已从 GitHub 开发分支读取本讲义和学习进度，确认文件已发布。具体发布途径与原 Codex 环境的直接写入能力不由此推断。环境中应用仍未运行。
