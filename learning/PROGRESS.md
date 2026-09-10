@@ -1,6 +1,6 @@
 # 学习进度
 
-更新日期：2026-09-09。由 Codex 辅助整理。
+更新日期：2026-09-10。由 Codex 辅助整理。
 
 ## 项目与证据来源
 
@@ -16,7 +16,8 @@
 - 第四步资料依据：当前副本的 README.md、docs/index.md 和 docs/usage.md；这是资料阅读，不是应用运行证据。
 - 第五步检查时的实际代码分支为 work，检查起点提交为 abd0f344f4bda96fe91dd696a5ba99d43a73a4af；第五步讲义提交标识为 c985208457f35e8575925b2cbc161c0f612cb499。
 - 第五步资料依据：当前副本的 docs/development.md、docs/setup.md、pyproject.toml、src-ui/package.json 和 docker/compose/docker-compose.sqlite.yml，以及只读系统检查结果。
-- 第六步开始时的实际代码分支为 work，起点提交为 6a9d23cbcfde1da5f21ef5b2cb05e3e5a6f6812e；已新增 learning/steps/06-uv-version.md，记录实际检查与安装受阻结果。
+- 第六步首次执行时的实际代码分支为 work，起点提交为 6a9d23cbcfde1da5f21ef5b2cb05e3e5a6f6812e；当时新增 learning/steps/06-uv-version.md，记录 uv 0.7.22 与安装受阻结果。
+- 2026-09-10 在 work 分支、起点提交 4b36f6d6b76c885424c99cc405b38779eb5f744a 上重新只读验收：入口 `/root/.local/bin/uv` 解析到 `/root/.local/share/pipx/venvs/uv/bin/uv`，版本为 0.12.12，满足项目最低要求 0.9.0。
 
 ## 完成状态
 
@@ -27,13 +28,13 @@
 | 03 核验 Codex 文件读取与教学理解 | 已通过，随本次提交记录 | 用户检查报告列出实际文件、规则、进度、分支、提交；提交与 GitHub 交叉核对一致 |
 | 04 理解项目解决的问题与主要使用流程 | 已完成，已核验 GitHub 发布 | 已读取 README.md、docs/index.md、docs/usage.md，并新增 learning/steps/04-business-workflow.md；当前聊天已从 GitHub 开发分支读取讲义与本进度，核对主要资料依据；未运行应用 |
 | 05 检查运行 Paperless-ngx 的前置条件 | 已完成，复核补正后已确认 GitHub 发布 | 已读取开发与安装说明并执行只读环境检查，新增 learning/steps/05-runtime-prerequisites.md，讲义提交为 c985208457f35e8575925b2cbc161c0f612cb499；未安装或启动应用 |
-| 06 使当前环境的 uv 满足项目版本要求 | 已执行，未完成 | 重新确认 uv 0.7.22 位于 pipx 环境且受 `uv==0.7.*` 限制；`pipx install --force 'uv>=0.9.0'` 因网络代理对官方来源返回 403 而失败，旧版本已复核保留 |
+| 06 核验 uv 的执行位置和版本 | 已完成 | 2026-09-10 只读复核得到入口 `/root/.local/bin/uv`、实际文件 `/root/.local/share/pipx/venvs/uv/bin/uv` 和版本 0.12.12；程序化比较确认满足 `>=0.9.0`，五项退出状态均为 0 |
 | 安装、启动与功能验证 | 未开始 | 第五步只检查前置条件，无运行证据 |
 | 当前环境的修改与发布能力 | 本地修改与提交已验证；GitHub 发布未验证 | 第五步文档已在 work 分支提交；本地没有远程仓库配置，也没有推送成功证据，不能据此声称已发布到 GitHub |
 
 ## 下一步
 
-第六步因当前环境的网络代理拒绝 Python Package Index 和 GitHub 官方发布渠道而停止。用户继续时，先重新核验网络、`command -v uv`、解析后的执行路径和 `uv --version`；官方来源可访问后，使用与现有安装方式一致的 `pipx install --force 'uv>=0.9.0'`，再核验版本不低于 0.9.0。完成前不安装整套项目依赖、不启动应用、不处理前端 pnpm。
+第六步已经通过。用户继续时，依据最新环境状态选择一个独立、可验收的后端环境准备小步骤；开始前先说明将安装的内容与验收边界，不同时处理前端 pnpm，也不把 uv 合格误写为应用已可运行。
 
 ## 已解释的差异和待办
 
@@ -56,4 +57,7 @@
 - libmagic 是共享库，不能凭命令不存在断定库缺失；后续安装前按需要核验实际库加载能力。
 - 2026-09-09 第六步重新检查：`/root/.local/bin/uv` 解析到 `/root/.local/share/pipx/venvs/uv/bin/uv`，实际仍为 0.7.22；pipx 1.4.3 元数据记录原安装规格 `uv==0.7.*`。
 - 第六步选用与现有 pipx 安装方式一致的 `pipx install --force 'uv>=0.9.0'`，但 Python Package Index 查询和 GitHub 官方发布页均被环境代理以 403 拒绝；本地没有其他 uv 或缓存安装包。旧环境未被删除并已复核仍可用。
-- 第六步没有安装任何项目依赖、没有修改 `pyproject.toml` 的版本要求、没有启动应用。网络恢复后必须完成版本与路径验收，不能把本次失败表述为工具准备完成。
+- 2026-09-09 的失败轮次没有安装任何项目依赖、没有修改 `pyproject.toml` 的版本要求、没有启动应用；当时因此不能把工具准备表述为已完成。该历史判断已由下一条 2026-09-10 的重新验收结果更新。
+- 2026-09-10 第六步复核：`type -a uv` 只列出 `/root/.local/bin/uv`，其解析后的文件为 `/root/.local/share/pipx/venvs/uv/bin/uv`；`uv --version` 返回 `uv 0.12.12 (x86_64-unknown-linux-gnu)`，版本比较通过。
+- 本次没有执行安装或升级，不能把从昨日 0.7.22 到今日 0.12.12 的变化归因于本次操作，也不推断更新主体或方式。没有安装其他依赖、没有启动应用。
+- 2026-09-10 外部官方文档仍未能读取：网页检索接口返回 `401 Unauthorized`，`curl` 读取 uv 与 pipx 官方页面均返回 HTTP 403。讲义保留官方链接并准确记录限制，没有据此虚构页面内容。
