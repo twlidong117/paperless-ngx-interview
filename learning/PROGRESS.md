@@ -18,6 +18,7 @@
 - 第五步资料依据：当前副本的 docs/development.md、docs/setup.md、pyproject.toml、src-ui/package.json 和 docker/compose/docker-compose.sqlite.yml，以及只读系统检查结果。
 - 第六步首次执行时的实际代码分支为 work，起点提交为 6a9d23cbcfde1da5f21ef5b2cb05e3e5a6f6812e；当时新增 learning/steps/06-uv-version.md，记录 uv 0.7.22 与安装受阻结果。
 - 2026-09-10 在 work 分支、起点提交 4b36f6d6b76c885424c99cc405b38779eb5f744a 上重新只读验收：入口 `/root/.local/bin/uv` 解析到 `/root/.local/share/pipx/venvs/uv/bin/uv`，版本为 0.12.12，满足项目最低要求 0.9.0。
+- 第七步开始时实际分支为 work，起点提交为 21de5e1750c4e2c10f6243ec06c9d1175d60163c；本步只验收准备脚本安装后的 Python 环境，不启动应用。
 
 ## 完成状态
 
@@ -29,12 +30,13 @@
 | 04 理解项目解决的问题与主要使用流程 | 已完成，已核验 GitHub 发布 | 已读取 README.md、docs/index.md、docs/usage.md，并新增 learning/steps/04-business-workflow.md；当前聊天已从 GitHub 开发分支读取讲义与本进度，核对主要资料依据；未运行应用 |
 | 05 检查运行 Paperless-ngx 的前置条件 | 已完成，复核补正后已确认 GitHub 发布 | 已读取开发与安装说明并执行只读环境检查，新增 learning/steps/05-runtime-prerequisites.md，讲义提交为 c985208457f35e8575925b2cbc161c0f612cb499；未安装或启动应用 |
 | 06 核验 uv 的执行位置和版本 | 已完成 | 2026-09-10 只读复核得到入口 `/root/.local/bin/uv`、实际文件 `/root/.local/share/pipx/venvs/uv/bin/uv` 和版本 0.12.12；程序化比较确认满足 `>=0.9.0`，五项退出状态均为 0 |
+| 07 验收准备脚本安装的 Python 依赖 | 已执行，整体未通过 | `.venv/bin/python` 成功从项目虚拟环境加载 Django 5.2.16 和 Celery 5.6.3；`uv sync --check` 获取 `psycopg-c` 构建产物时因网络隧道错误返回 2；`pyproject.toml` 与 `uv.lock` 前后哈希一致且 Git 无差异；未启动应用 |
 | 安装、启动与功能验证 | 未开始 | 第五步只检查前置条件，无运行证据 |
 | 当前环境的修改与发布能力 | 本地修改与提交已验证；GitHub 发布未验证 | 第五步文档已在 work 分支提交；本地没有远程仓库配置，也没有推送成功证据，不能据此声称已发布到 GitHub |
 
 ## 下一步
 
-第六步已经通过。用户继续时，依据最新环境状态选择一个独立、可验收的后端环境准备小步骤；开始前先说明将安装的内容与验收边界，不同时处理前端 pnpm，也不把 uv 合格误写为应用已可运行。
+第七步停在第一个有意义的错误。用户继续时，先重新确认访问项目指定 GitHub 构建产物的网络条件，再重跑失败的 `uv sync --check`；在该检查通过前不启动应用。
 
 ## 已解释的差异和待办
 
@@ -61,3 +63,7 @@
 - 2026-09-10 第六步复核：`type -a uv` 只列出 `/root/.local/bin/uv`，其解析后的文件为 `/root/.local/share/pipx/venvs/uv/bin/uv`；`uv --version` 返回 `uv 0.12.12 (x86_64-unknown-linux-gnu)`，版本比较通过。
 - 本次没有执行安装或升级，不能把从昨日 0.7.22 到今日 0.12.12 的变化归因于本次操作，也不推断更新主体或方式。没有安装其他依赖、没有启动应用。
 - 2026-09-10 外部官方文档仍未能读取：网页检索接口返回 `401 Unauthorized`，`curl` 读取 uv 与 pipx 官方页面均返回 HTTP 403。讲义保留官方链接并准确记录限制，没有据此虚构页面内容。
+- 2026-09-10 第七步验收：`.venv/bin/python` 的 `sys.executable` 为项目虚拟环境入口；Django 5.2.16 与 Celery 5.6.3 均从 `.venv/lib/python3.12/site-packages` 成功导入。
+- 第七步的 `uv sync --check` 返回 2；第一个有意义的错误是访问项目指定的 `psycopg-c` GitHub 构建产物时网络隧道连接失败。该结果不能证明完整锁定环境一致，也不推翻两个框架已成功导入的事实。
+- 第七步检查前后 `pyproject.toml` 与 `uv.lock` 的对象哈希完全一致，指定文件的 Git 状态无输出且差异检查返回 0；没有降级或删除依赖，没有启动应用。
+- 第七步官方文档核验受限：网页检索返回 401，四个官方页面的 `curl` 请求均返回 HTTP 403；讲义准确记录限制，不声称已读取页面正文。
